@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Neo4j 的安装与配置</title>
+    <meta name="description" content="  1. 下载  2. 安装  3. 配置  4. 使用1. 下载从官网https://neo4j.com/download/?ref=home下载社区版，这里下载windows(exe)，貌似比较难下载。2. 安装一路默认安装即可3. 配置数据库初始配置修改，目前主要使用到两项功能需要修改：load本地csv文...">
+
+    <link rel="shortcut icon" href="/favicon.ico?" type="image/x-icon">
+    <link rel="icon" href="/favicon.ico?" type="image/x-icon">
+    <link rel="stylesheet" href="/css/fontawesome/css/font-awesome.min.css ">
+    <link rel="stylesheet" href="/css/main.css ">
+    <link rel="canonical" href="http://localhost:4000/2016/12/15/install-and-config-neo4j/">
+    <link rel="alternate" type="application/rss+xml" title="水积而鱼聚, 木茂而鸟集" href="http://localhost:4000/feed.xml ">
+
+
+    <script>
+    // 百度统计代码
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?bf8ac8360c74b06f22dcc06b90421519";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+    </script>
+
+
+    <script>
+    // google analytics
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-88833276-1', 'auto');
+      ga('send', 'pageview');
+
+    </script>
+
+</head>
+
+
+  <body>
+
+    <header id="top">
+    <div class="wrapper">
+        <a href="/" class="brand">水积而鱼聚, 木茂而鸟集</a>
+        <small>元 亨 利 贞</small>
+        <button id="headerMenu" class="menu"><i class="fa fa-bars"></i></button>
+        <nav id="headerNav">
+            <ul>
+                <li>
+                    
+                    <a href="/">
+                    
+                        <i class="fa fa-home"></i>主页
+                    </a>
+                </li>
+
+                
+                    
+                    <li>
+                        
+                        <a href="/archive/">
+                        
+                            <i class="fa fa-archive"></i>归档
+                        </a>
+                    </li>
+                    
+                
+                    
+                    <li>
+                        
+                        <a href="/category/">
+                        
+                            <i class="fa fa-th-list"></i>分类
+                        </a>
+                    </li>
+                    
+                
+                    
+                    <li>
+                        
+                        <a href="/tag/">
+                        
+                            <i class="fa fa-tags"></i>标签
+                        </a>
+                    </li>
+                    
+                
+                    
+                    <li>
+                        
+                        <a href="/collection/">
+                        
+                            <i class="fa fa-bookmark"></i>精华
+                        </a>
+                    </li>
+                    
+                
+                    
+                    <li>
+                        
+                        <a href="/about/">
+                        
+                            <i class="fa fa-heart"></i>关于我
+                        </a>
+                    </li>
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+            </ul>
+        </nav>
+    </div>
+</header>
+
+
+        <div class="page clearfix" post>
+    <div class="left">
+        <h1>Neo4j 的安装与配置</h1>
+        <div class="label">
+
+            <div class="label-card">
+                <i class="fa fa-calendar"></i>2016-12-15
+            </div>
+
+            <div class="label-card">
+                <i class="fa fa-user"></i>freyr
+                
+            </div>
+
+            <div class="label-card">
+                
+            </div>
+
+            <div class="label-card">
+            
+
+
+<!-- <span class="point">•</span> -->
+<span class="categories">
+  <i class="fa fa-th-list"></i>
+  
+    
+        <a href="/category/#Neo4j" title="Category: Neo4j" rel="category">Neo4j</a>
+    
+  
+
+  <!-- <span class="point">•</span> -->
+</span>
+
+
+            </div>
+
+            <div class="label-card">
+            
+<!-- <span class="point">•</span> -->
+<span class="pageTag">
+  <i class="fa fa-tags"></i>
+  
+    
+        <!--a href="/tag/#Neo4j" title="Tag: Neo4j" rel="tag">Neo4j</a-->
+        <a href="/tag/#Neo4j" title="Tag: Neo4j" rel="tag">Neo4j</a>
+    
+  
+
+</span>
+
+            </div>
+
+        </div>
+        <hr>
+        <article itemscope itemtype="http://schema.org/BlogPosting">
+        <ul id="markdown-toc">
+  <li><a href="#1-下载" id="markdown-toc-1-下载">1. 下载</a></li>
+  <li><a href="#2-安装" id="markdown-toc-2-安装">2. 安装</a></li>
+  <li><a href="#3-配置" id="markdown-toc-3-配置">3. 配置</a></li>
+  <li><a href="#4-使用" id="markdown-toc-4-使用">4. 使用</a></li>
+</ul>
+
+<h2 id="1-下载">1. 下载</h2>
+
+<p>从官网<code class="highlighter-rouge">https://neo4j.com/download/?ref=home</code>下载社区版，这里下载windows(exe)，貌似比较难下载。</p>
+
+<h2 id="2-安装">2. 安装</h2>
+
+<p>一路默认安装即可</p>
+
+<h2 id="3-配置">3. 配置</h2>
+
+<p>数据库初始配置修改，目前主要使用到两项功能需要修改：</p>
+
+<p>load本地csv文件，注释掉<code class="highlighter-rouge">dbms.directories.import=import</code>，不然只能自己在1中目录下创建import目录放入本地文本。</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code># This setting constrains all `LOAD CSV` import files to be under the `import` directory. Remove or uncomment it to
+# allow files to be loaded from anywhere in filesystem; this introduces possible security problems. See the `LOAD CSV`
+# section of the manual for details.
+# dbms.directories.import=import
+</code></pre>
+</div>
+
+<p>Python连接数据库，改dbms.security.auth_enabled为<code class="highlighter-rouge">false</code>，否则连接不上。</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code># Require (or disable the requirement of) auth to access Neo4j
+dbms.security.auth\_enabled=false
+</code></pre>
+</div>
+
+<h2 id="4-使用">4. 使用</h2>
+
+<p>返回点击start启动服务，点击<code class="highlighter-rouge">http://localhost:7474/</code>会打开web界面，使用默认账户(neo4j)、密码(neo4j)即可登录。</p>
+
+<blockquote>
+  <p>根据启动页面提供的官方 tutorial 学习使用。</p>
+</blockquote>
+
+
+        </article>
+        <hr>
+
+        
+        
+            
+            
+                
+                    
+                
+            
+                
+                    
+                
+            
+                
+                    
+                
+            
+        
+        
+
+        <div class="post-recent">
+    <div class="pre">
+        
+        <p><strong>上一篇</strong> <a href="/2016/12/10/how-to-use-userdict-in-jieba/">Jieba 自定义词典的使用</a></p>
+        
+    </div>
+    <div class="nex">
+
+        
+    </div>
+</div>
+
+
+        <h5 id="comments">☞ 发表评论</h5>
+        
+<!-- 多说评论框 start -->
+<div class="ds-thread" data-thread-key="http://localhost:4000/2016/12/15/install-and-config-neo4j/" data-title="Neo4j 的安装与配置" data-url="http://localhost:4000/2016/12/15/install-and-config-neo4j/"></div>
+<!-- 多说评论框 end -->
+<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
+<script type="text/javascript">
+    var duoshuoQuery = {
+        short_name: "ifreyr"
+    };
+    (function() {
+        var ds = document.createElement('script');
+        ds.type = 'text/javascript';
+        ds.async = true;
+        ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+        ds.charset = 'UTF-8';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+</script>
+<!-- 多说公共JS代码 end -->
+
+
+
+
+
+
+    </div>
+    <button class="anchor"><i class="fa fa-anchor"></i></button>
+    <div class="right">
+        <div class="wrap">
+
+            <!-- Content -->
+            <div class="side content">
+                <div>
+                    目  录
+                </div>
+                <ul id="content-side" class="content-ul">
+                    <!-- <li><a href="#similar_posts"><small>同类文章</small></a></li>
+                    <li><a href="#comments"><small>发表评论</small></a></li> -->
+                </ul>
+            </div>
+            <!-- 其他div框放到这里 -->
+            <!-- <div class="side">bbbb</div> -->
+        </div>
+    </div>
+</div>
+<script>
+/**
+ * target _blank
+ */
+(function() {
+    var aTags = document.querySelectorAll('article a:not([id])')
+    for (var i = 0; i < aTags.length; i++) {
+        aTags[i].setAttribute('target', '_blank')
+    }
+}());
+</script>
+<script src="/js/pageContent.js " charset="utf-8"></script>
+
+
+    <footer class="site-footer">
+
+
+    <div class="wrapper">
+
+        <p class="description">
+             旋律载满你的爱, 这恋曲音韵创自你笑声！ 
+        </p>
+        <p class="contact">
+            Contact me at: 
+            <a href="https://github.com/ifreyr" title="GitHub"><i class="fa fa-github" aria-hidden="true"></i></a>  
+            <a href="mailto:mrchan3030@foxmail.com" title="email"><i class="fa fa-envelope-o" aria-hidden="true"></i></a>        
+        </p>
+        <p>
+            本站总访问量<span id="busuanzi_value_site_pv"></span>次，本站访客数<span id="busuanzi_value_site_uv"></span>人次，本文总阅读量<span id="busuanzi_value_page_pv"></span>次
+        </p>
+    </div>
+</footer>
+<script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+    <div class="back-to-top">
+    <a href="#top" class="scroll">
+        <i class="fa fa-arrow-up" aria-hidden="true"></i>
+    </a>
+</div>
+
+    <script src=" /js/main.js " charset="utf-8"></script>
+    <script src=" /js/scroll.min.js " charset="utf-8"></script>
+  </body>
+
+</html>

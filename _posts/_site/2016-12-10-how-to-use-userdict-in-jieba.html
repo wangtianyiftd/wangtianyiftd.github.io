@@ -1,0 +1,67 @@
+<ul id="markdown-toc">
+  <li><a href="#1-设置匹配任意字符" id="markdown-toc-1-设置匹配任意字符">1. 设置匹配任意字符</a></li>
+  <li><a href="#2-修改jieba的字典格式" id="markdown-toc-2-修改jieba的字典格式">2. 修改jieba的字典格式</a></li>
+  <li><a href="#3-新建实例" id="markdown-toc-3-新建实例">3. 新建实例</a></li>
+  <li><a href="#4-加载自定义词典" id="markdown-toc-4-加载自定义词典">4. 加载自定义词典</a></li>
+  <li><a href="#5-使用" id="markdown-toc-5-使用">5. 使用</a></li>
+</ul>
+
+<blockquote>
+  <p>本方法用于实现按自定义词典进行切词（原生jiaba针对中文，且在最终pyinstaller成exe文件时找不到默认词典dict.txt），思路是从 jieba 的 Tokenizer 类继承并修改 gen_pfdict 函数，最后设置默认词典和自定义词典的路径。</p>
+</blockquote>
+
+<h3 id="1-设置匹配任意字符">1. 设置匹配任意字符</h3>
+<div class="language-python highlighter-rouge"><pre class="highlight"><code><span class="n">jieba</span><span class="o">.</span><span class="n">re_han_default</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="nb">compile</span><span class="p">(</span><span class="s">"(.+)"</span><span class="p">,</span> <span class="n">re</span><span class="o">.</span><span class="n">U</span><span class="p">)</span>
+</code></pre>
+</div>
+
+<h3 id="2-修改jieba的字典格式">2. 修改jieba的字典格式</h3>
+
+<blockquote>
+  <p>可以不设置词频</p>
+</blockquote>
+
+<div class="language-python highlighter-rouge"><pre class="highlight"><code><span class="k">class</span> <span class="nc">MyTokenizer</span><span class="p">(</span><span class="n">jieba</span><span class="o">.</span><span class="n">Tokenizer</span><span class="p">):</span>
+	<span class="k">def</span> <span class="nf">gen_pfdict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">f</span><span class="p">):</span>
+		<span class="n">lfreq</span> <span class="o">=</span> <span class="p">{}</span>
+		<span class="n">ltotal</span> <span class="o">=</span> <span class="mi">0</span>
+		<span class="n">f_name</span> <span class="o">=</span> <span class="n">jieba</span><span class="o">.</span><span class="n">resolve_filename</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+		<span class="k">for</span> <span class="n">lineno</span><span class="p">,</span> <span class="n">line</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="mi">1</span><span class="p">):</span>
+			<span class="k">try</span><span class="p">:</span>
+				<span class="n">line</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s">'utf-8'</span><span class="p">)</span>
+				<span class="c"># word, freq = line.split(' ')[:2]</span>
+				<span class="k">try</span><span class="p">:</span>
+					<span class="n">word</span><span class="p">,</span> <span class="n">freq</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">'</span><span class="se">\t</span><span class="s">'</span><span class="p">)[:</span><span class="mi">2</span><span class="p">]</span>
+				<span class="k">except</span><span class="p">:</span>
+					<span class="n">word</span><span class="p">,</span> <span class="n">freq</span> <span class="o">=</span> <span class="n">line</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="mi">1</span>
+				<span class="n">freq</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">freq</span><span class="p">)</span>
+				<span class="n">lfreq</span><span class="p">[</span><span class="n">word</span><span class="p">]</span> <span class="o">=</span> <span class="n">freq</span>
+				<span class="n">ltotal</span> <span class="o">+=</span> <span class="n">freq</span>
+				<span class="k">for</span> <span class="n">ch</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">word</span><span class="p">)):</span>
+					<span class="n">wfrag</span> <span class="o">=</span> <span class="n">word</span><span class="p">[:</span><span class="n">ch</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span>
+					<span class="k">if</span> <span class="n">wfrag</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">lfreq</span><span class="p">:</span>
+						<span class="n">lfreq</span><span class="p">[</span><span class="n">wfrag</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+			<span class="k">except</span> <span class="nb">ValueError</span><span class="p">:</span>
+				<span class="k">raise</span> <span class="nb">ValueError</span><span class="p">(</span>
+					<span class="s">'invalid dictionary entry in </span><span class="si">%</span><span class="s">s at Line </span><span class="si">%</span><span class="s">s: </span><span class="si">%</span><span class="s">s'</span> <span class="o">%</span> <span class="p">(</span><span class="n">f_name</span><span class="p">,</span> <span class="n">lineno</span><span class="p">,</span> <span class="n">line</span><span class="p">))</span>
+		<span class="n">f</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+		<span class="k">return</span> <span class="n">lfreq</span><span class="p">,</span> <span class="n">ltotal</span>
+</code></pre>
+</div>
+
+<h3 id="3-新建实例">3. 新建实例</h3>
+<div class="language-python highlighter-rouge"><pre class="highlight"><code><span class="n">my_tokenizer</span> <span class="o">=</span> <span class="n">MyTokenizer</span><span class="p">()</span>
+</code></pre>
+</div>
+
+<h3 id="4-加载自定义词典">4. 加载自定义词典</h3>
+<div class="language-python highlighter-rouge"><pre class="highlight"><code><span class="n">my_tokenizer</span><span class="o">.</span><span class="n">set_dictionary</span><span class="p">(</span><span class="s">'./user_dict.txt'</span><span class="p">)</span>
+<span class="n">my_tokenizer</span><span class="o">.</span><span class="n">load_userdict</span><span class="p">(</span><span class="s">'./user_dict.txt'</span><span class="p">)</span>
+</code></pre>
+</div>
+
+<h3 id="5-使用">5. 使用</h3>
+<div class="language-python highlighter-rouge"><pre class="highlight"><code><span class="n">my_tokenizer</span><span class="o">.</span><span class="n">cut</span><span class="p">(</span><span class="n">keyword</span><span class="p">)</span>
+</code></pre>
+</div>
+
